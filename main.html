@@ -147,7 +147,7 @@
     let player2 = '';
     let currentPlayer = '';
     let currentSymbol = 'x';
-    let boardState = Array(9).fill(null);
+    let boardState = ['', '', '', '', '', '', '', '', ''];
     let gameActive = false;
 
     const winningCombinations = [
@@ -172,11 +172,11 @@
 
     cells.forEach(cell => {
       cell.addEventListener('click', () => {
-        const index = parseInt(cell.id) - 1;
+        const index = Number(cell.id) - 1;
 
-        if (!gameActive || boardState[index] !== null) return;
+        if (!gameActive || boardState[index] !== '') return;
 
-        // Make move
+        // Update state and UI
         boardState[index] = currentSymbol;
         cell.textContent = currentSymbol;
 
@@ -188,7 +188,7 @@
         }
 
         // Check for Draw
-        if (boardState.every(cell => cell !== null)) {
+        if (checkDraw()) {
           messageDiv.textContent = `It's a draw!`;
           gameActive = false;
           return;
@@ -208,11 +208,21 @@
     });
 
     function checkWin() {
-      return winningCombinations.some(combination => {
-        return combination.every(index => {
-          return boardState[index] === currentSymbol;
-        });
-      });
+      for (let i = 0; i < winningCombinations.length; i++) {
+        const [a, b, c] = winningCombinations[i];
+        if (
+          boardState[a] !== '' &&
+          boardState[a] === boardState[b] &&
+          boardState[a] === boardState[c]
+        ) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    function checkDraw() {
+      return boardState.every(cell => cell !== '');
     }
   </script>
 
